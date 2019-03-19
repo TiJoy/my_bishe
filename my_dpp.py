@@ -35,24 +35,6 @@ best_options = PositivePowBias.autotune(I0, Alpha, Lambda, cache="PositivePowBia
 # run the kernel with the autotuned options
 #out = PositivePowBias(I0, Alpha, Lambda, options=best_options)
 
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
-        self.up1 = nn.Upsample(scale_factor=2, mode='nearest')
-        self.avg1 = nn.AvgPool2d(2, stride=2)
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.conv2_drop = nn.Dropout2d()
-        self.fc1 = nn.Linear(320, 50)
-        self.fc2 = nn.Linear(50, 10)
-
-    def forward(self, I):
-        It= F.upsample(F.avg_pool2d(I, 2), scale_factor=2, mode='nearest')
-        x= ((I-It)**2)+1e-3
-        xn= F.upsample(F.avg_pool2d(x, 2), scale_factor=2, mode='nearest')
-        w=x/xn
-        return F.log_softmax(x, dim=1)
-
 class pospowbias(nn.Module):
     def __init__(self):
         super(pospowbias, self).__init__()
