@@ -10,6 +10,9 @@ import torch
 import torch.nn as nn
 #from torch.utils.serialization import load_lua
 import torch.nn.functional as F
+import numpy as np
+from PIL import Image
+import matplotlib.pyplot as plt
 # define the operation as TC language
 lang = """
 def PositivePowBias(float(B, C, W, H) I0, float(C) Alpha, float(C) Lambda) -> (O) {
@@ -58,3 +61,14 @@ class DPP(nn.Module):
         Iw = F.avg_pool2d(I*w, 2)
         return Iw/kp
 
+img = Image.open("orig_feature_map.jpg")
+img_np = np.array(img)
+img_t = torch.from_numpy(img_np[:, :, 0])
+
+dpp = DPP()
+out = dpp.forward(img_t)
+out_np = out.numpy()
+out_img = np.array([out_np, out_np, out_np])
+
+plt.imshow(out_img)
+plt.show()
